@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DSJ4 - obrazy na zeskoku</title>
+<meta charset="utf-8">
+</head>
+<style>
+body {color:#cccccc;font-family:Tahoma;background-color:#333333;text-align:center}
+div#container {background-color:#222222;margin:0 auto;max-width:1000px}
+canvas {margin-top:10px;margin-bottom:10px}
+h1 {padding:10px 20px;color:#ffffff;background-color:#444444}
+h2 {padding:5px 20px;color:#ffff00}
+a {display:block;margin-bottom:10px;text-decoration:none;color:#ffff99}
+a:hover {display:block;margin-bottom:10px;text-decoration:none;color:#ffffff}
+div#footer {margin-top:25px;padding:5px;background-color:#444444}
+td {width:10px;height:10px}
+span.t-label {display:inline-block;width:240px;text-align:left}
+input[type=color] {width:60px;background-color:#222222;color:#dddddd;height:30px;border:1px solid #888888}
+input[type=number] {width:60px;background-color:#222222;color:#dddddd;height:20px;font-family:Tahoma;font-size:12pt;border:1px solid #888888}
+div.left {width:50%;box-sizing:border-box;float:left;text-align:left;padding:5px 10px}
+div.right {width:50%;box-sizing:border-box;float:left;text-align:left;padding:5px 10px}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+textarea {width:100%;height:100px;color:#dddddd;background-color:#000000}
+button {padding:5px 12px;background-color:#444444;color:#ffffff;border:1px 888888 solid;cursor:pointer}
+button:hover {padding:5px 12px;background-color:#666666;color:#ffffff;border:1px 888888 solid;cursor:pointer}
+button:active {padding:5px 12px;background-color:#888888;color:#ffffff;border:1px 888888 solid;cursor:pointer}
+</style>
+<body>
+<div id="container">
+<h1>DSJ4 - Generator obrazów na igelicie</h1>
+Obraz do wklejenia na zeskok:
+<input type="file" id="wejscie">
+<br>
+<canvas width="500" height="400" id="canvas">
+</canvas>
+<div class="row">
+<div class="left">
+<span class="t-label">Kolor tła:</span><span class="t-label"><input type="color" id="bg_color"></span><br>
+<span class="t-label">Wielkość piksela (m):</span><span class="t-label"><input type="number" id="pixel_size" step="0.01" value="0.5"></span><br>
+<span class="t-label">Metry od góry zeskoku:</span><span class="t-label"><input type="number" id="offset_x" step="0.01" value="40"></span><br>
+<span class="t-label">Metry od środka zeskoku:</span><span class="t-label"><input type="number" id="offset_z" step="0.01" value="0"></span><br>
+<button onclick="generateLines()"/>Generuj linie (lato)</button><br>
+</div>
+<div class="right">
+Wyjście (skopiuj i wklej do pliku XML między tagami &lt;summer&gt;):<br>
+<textarea id="output"></textarea>
+</div>
+</div>
+<div id="footer">&copy; 2022 Marcin Przybyła</div>
+</div>
+<script>
+document.getElementById('wejscie').onchange = function(e) {
+  var img = new Image();
+  img.onload = draw;
+  img.onerror = failed;
+  img.src = URL.createObjectURL(this.files[0]);
+};
+function draw() {
+  var canvas = document.getElementById('canvas');
+  canvas.width = this.width;
+  canvas.height = this.height;
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(this, 0,0);
+}
+function failed() {
+  console.error("To nie jest obraz!");
+}
+
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext("2d");
+
+function generateLines()
+{
+
+var hex_array = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
+
+var text="";
+
+var img_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+var bg_color = document.getElementById("bg_color").value.substring(1,7);
+var pixel_size = parseFloat(document.getElementById("pixel_size").value);
+var offset_x = parseFloat(document.getElementById("offset_x").value);
+var offset_z = parseFloat(document.getElementById("offset_z").value);
+
+for(var i=0; i<img_data.data.length; i+=4)
+{
+var color_hex = hex_array[Math.floor(img_data.data[i]/16)]+hex_array[img_data.data[i]%16]+hex_array[Math.floor(img_data.data[i+1]/16)]+hex_array[img_data.data[i+1]%16]+hex_array[Math.floor(img_data.data[i+2]/16)]+hex_array[img_data.data[i+2]%16];
+
+var img_x = Math.floor((i/4)/canvas.width);
+var img_y = (i/4) % canvas.width;
+
+
+if(color_hex != bg_color)
+{
+text += "<line d=\"" + (offset_x+(img_x*pixel_size)) + "\" z1=\"" + (((canvas.width*-0.5+img_y)*pixel_size)-pixel_size/2) + "\" z2=\"" + (((canvas.width*-0.5+img_y)*pixel_size)+pixel_size/2) + "\" w=\"" + pixel_size + "\" c=\"0x" + color_hex + "\"/>\n";
+}
+
+}
+
+document.getElementById("output").value = text;
+
+}
+
+</script>
+
+</body>
+</html>
