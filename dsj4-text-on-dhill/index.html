@@ -1,0 +1,342 @@
+<html>
+<head>
+<title>dhill text generator - DSJ4 1.10</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+Tekst: <input type="text" id="input_text"></input><br>
+Obsługiwane znaki: spacja, cyfry 0-9, wielkie litery A-Z,ĄĆĘŁŃÓŚŹŻ, znaki specjalne: .,-!?:;'"&amp;+()
+<br>
+Odległość od progu (d): <input type="number" step="0.01" id="distance_x" value="0"></input><br>
+Odległość od środka zeskoku (z): <input type="number" step="0.01" id="distance_z" value="0"></input><br>
+Wysokość liter: <input type="number" step="0.01" id="char_height" value="1"></input><br>
+Szerokość linii: <input type="number" step="0.01" id="line_width" value="0.25"></input><br>
+Kolor linii: <input type="color" id="line_color" value="#ff0000"></input><br>
+Count: <input type="number" id="line_count" value="4"></input> Step: <input type="number" id="line_step" value="0.05" step="0.01"></input><br>
+Wielkość gałązki: <input type="number" id="twig_size" value="0.2" step="0.01" ></input> Odstępy między gałązkami: <input type="number" id="twig_space" value="0.1" step="0.01"></input><br>
+Typ: <input name="text_type" id="type_twigs" type="radio" >Gałązki (twigs) <input name="text_type" id="type_spray" type="radio" checked >Spray <input name="text_type" id="type_line" type="radio" >Linia (line) <br>
+Wyrównanie tekstu: <input name="text_align" id="align_left" type="radio" >Do lewej <input name="text_align" id="align_center" type="radio" checked>Do środka <input name="text_align" id="align_right" type="radio" >Do prawej<br>
+<button onclick="generate()">Generuj</button><br>
+Wynikowy XML:<br>
+<textarea id="output_xml" rows="25" cols="50">
+</textarea>
+
+<script>
+
+var width = [];
+
+width[32] = 32;
+width[48] = 48;
+width[49] = 48;
+width[50] = 48;
+width[51] = 48;
+width[52] = 48;
+width[53] = 48;
+width[54] = 48;
+width[55] = 48;
+width[56] = 48;
+width[57] = 48;
+width[65] = 63;
+width[66] = 63;
+width[67] = 63;
+width[68] = 63;
+width[69] = 63;
+width[70] = 63;
+width[71] = 63;
+width[72] = 63;
+width[73] = 1;
+width[74] = 47;
+width[75] = 63;
+width[76] = 63;
+width[77] = 71;
+width[78] = 63;
+width[79] = 63;
+width[80] = 63;
+width[81] = 73;
+width[82] = 63;
+width[83] = 63;
+width[84] = 63;
+width[85] = 63;
+width[86] = 63;
+width[87] = 89;
+width[88] = 63;
+width[89] = 63;
+width[90] = 63;
+
+width[260] = 63;
+width[262] = 63;
+width[280] = 63;
+width[321] = 63;
+width[323] = 63;
+width[211] = 63;
+width[346] = 63;
+width[377] = 63;
+width[379] = 63;
+
+width[46] = 1;
+width[44] = 5;
+width[45] = 37;
+width[33] = 1;
+width[63] = 44;
+width[58] = 0;
+width[59] = 5;
+width[39] = 5;
+width[34] = 19;
+width[38] = 79;
+width[43] = 51;
+width[40] = 24;
+width[41] = 24;
+
+var t = [];
+
+ //spacja
+ t[32] = [];
+ 
+ //cyfry 0-9
+ t[48] = [19,0,30,0,31,0,41,7,41,7,48,21,48,21,48,79,48,79,41,92,41,92,29,98,29,98,18,98,18,98,6,91,6,91,0,79,0,79,0,21,0,21,7,6,7,6,19,0];
+
+ t[49] = [8,18,33,0,33,0,33,98];
+
+ t[50] = [0,18,6,6,6,6,18,0,18,0,29,0,29,0,41,7,41,7,47,18,47,18,47,30,47,30,41,42,41,42,0,98,0,98,48,98];
+
+ t[51] = [0,16,6,6,6,6,17,0,17,0,27,0,27,0,41,8,41,8,47,20,47,20,47,29,47,29,38,43,38,43,30,48,30,48,23,48,30,48,41,55,41,55,48,67,48,67,48,78,48,78,41,91,41,91,28,98,28,98,17,98,17,98,5,91,5,91,0,83];
+
+ t[52] = [48,75,0,75,0,75,40,0,40,0,40,98];
+
+ t[53] = [48,0,0,0,0,0,0,46,0,46,7,41,7,41,17,36,17,36,32,36,32,36,41,42,41,42,48,56,48,56,48,79,48,79,41,92,41,92,30,98,30,98,16,98,16,98,4,90,4,90,0,83];
+
+ t[54] = [48,18,42,7,42,7,30,0,30,0,17,0,17,0,7,6,7,6,0,20,0,20,0,77,0,77,7,92,7,92,18,98,18,98,31,98,31,98,42,91,42,91,48,79,48,79,48,58,48,58,42,47,42,47,32,42,32,42,15,42,15,42,6,48,6,48,0,59];
+
+ t[55] = [0,0,48,0,48,0,11,98];
+
+ t[56] = [32,47,43,37,43,37,47,28,47,28,47,18,47,18,41,7,41,7,28,0,28,0,19,0,19,0,7,7,7,7,1,19,1,19,1,30,1,30,8,41,8,41,16,47,16,47,7,54,7,54,0,64,0,64,0,78,0,78,6,90,6,90,18,98,18,98,30,98,30,98,42,90,42,90,48,78,48,78,48,64,48,64,41,54,41,54,32,47,32,47,16,47];
+
+ t[57] = [0,80,6,91,6,91,18,98,18,98,31,98,31,98,41,92,41,92,48,78,48,78,48,21,48,21,41,6,41,6,30,0,30,0,17,0,17,0,6,7,6,7,0,19,0,19,0,40,0,40,6,51,6,51,16,56,16,56,33,56,33,56,42,50,42,50,48,39];
+ 
+ //litery 
+ 
+ //A:
+ t[65] = [0,98,31,0,31,0,62,98,8,72,54,72]; //t[8] grubsze
+ //B:
+ t[66] = [0,0,0,98,0,98,41,98,41,98,55,91,55,91,62,81,62,81,62,67,62,67,54,55,54,55,40,48,40,48,0,48,40,48,51,41,51,41,60,30,60,30,60,18,60,18,55,7,55,7,41,0,41,0,0,0];
+ //C:
+ t[67] = [62,21,53,8,53,8,38,0,38,0,25,0,25,0,8,9,8,9,0,28,0,28,0,70,0,70,9,90,9,90,24,98,24,98,38,98,38,98,53,90,53,90,62,75];
+ //D:
+ t[68] = [0,0,0,98,0,98,38,98,38,98,54,89,54,89,62,74,62,74,62,27,62,27,53,9,53,9,37,0,37,0,0,0];
+ //E:
+ t[69] = [62,0,0,0,0,0,0,98,0,98,62,98,0,48,51,48]; //t[0] i t[8] grubsze
+ //F:
+ t[70] = [62,0,0,0,0,0,0,98,0,50,49,50]; //t[0] grubsze
+ //G:
+ t[71] = [60,18,53,8,53,8,38,0,38,0,24,0,24,0,9,8,9,8,0,28,0,28,0,68,0,68,11,90,11,90,24,98,24,98,38,98,38,98,54,89,54,89,62,74,62,74,62,51,62,51,37,51];
+ //H:
+ t[72] = [0,0,0,98,0,49,62,49,62,0,62,98];
+ //I:
+ t[73] = [0,0,0,98];
+ //J:
+ t[74] = [0,93,11,98,11,98,24,98,24,98,39,90,39,90,46,76,46,76,46,0];
+ //K:
+ t[75] = [0,0,0,98,0,55,59,0,7,48,62,98];
+ //L:
+ t[76] = [0,0,0,98,0,98,62,98];
+ //M:
+ t[77] = [0,98,0,0,0,0,35,83,35,83,70,0,70,0,70,98];
+ //N:
+ t[78] = [0,98,0,0,0,0,62,98,62,98,62,0];
+ //O:
+ t[79] = [23,0,9,7,9,7,0,26,0,26,0,73,0,73,8,90,8,90,23,98,23,98,38,98,38,98,54,90,54,90,62,74,62,74,62,27,62,27,53,9,53,9,37,0,37,0,23,0];
+ //P:
+ t[80] = [0,98,0,0,0,0,41,0,41,0,56,9,56,9,62,21,62,21,62,36,62,36,54,47,54,47,40,54,40,54,0,54];
+ //Q:
+ t[81] = [24,0,10,8,10,8,0,28,0,28,0,68,0,68,10,89,10,89,24,97,24,97,39,97,39,97,53,90,53,90,64,70,64,70,64,24,64,24,56,9,56,9,39,0,39,0,24,0,41,72,72,98];
+ //R:
+ t[82] = [0,98,0,0,0,0,43,0,43,0,56,7,56,7,62,18,62,18,62,32,62,32,55,43,55,43,41,50,41,50,0,50,37,50,62,98];
+ //S:
+ t[83] = [57,6,40,0,40,0,21,0,21,0,10,6,10,6,3,17,3,17,3,28,3,28,9,40,9,40,20,46,20,46,40,49,40,49,56,57,56,57,62,69,62,69,62,79,62,79,57,89,57,89,40,98,40,98,20,98,20,98,0,90];
+ //T:
+ t[84] = [0,0,62,0,31,0,31,98];
+ //U:
+ t[85] = [0,0,0,77,0,77,8,90,8,90,24,98,24,98,38,98,38,98,54,90,54,90,62,74,62,74,62,0];
+ //V:
+ t[86] = [0,0,31,98,31,98,62,0];
+ //W:
+ t[87] = [0,0,15,98,15,98,44,5,44,5,73,98,73,98,88,0];
+ //X:
+ t[88] = [2,0,62,98,59,0,0,98];
+ //Y:
+ t[89] = [0,0,30,58,30,58,62,0,30,58,30,98];
+ //Z:
+ t[90] = [0,0,62,0,62,0,0,98,0,98,62,98];
+ //Ą:
+ t[260] = [0,98,31,0,31,0,62,98,8,72,54,72,62,98,54,113];
+ //Ć:
+ t[262] = [62,21,53,8,53,8,38,0,38,0,25,0,25,0,8,9,8,9,0,28,0,28,0,70,0,70,9,90,9,90,24,98,24,98,38,98,38,98,53,90,53,90,62,75,25,-10,42,-19];
+ //Ę:
+ t[280] = [62,0,0,0,0,0,0,98,0,98,62,98,0,48,51,48,62,98,54,113];
+ //Ł:
+ t[321] = [0,0,0,98,0,98,62,98,-10,62,29,33];
+ //Ń:
+ t[323] = [0,98,0,0,0,0,62,98,62,98,62,0,25,-10,42,-24];
+ //Ó:
+ t[211] = [23,0,9,7,9,7,0,26,0,26,0,73,0,73,8,90,8,90,23,98,23,98,38,98,38,98,54,90,54,90,62,74,62,74,62,27,62,27,53,9,53,9,37,0,37,0,23,0,25,-10,42,-24];
+ //Ś:
+ t[346] = [57,6,40,0,40,0,21,0,21,0,10,6,10,6,3,17,3,17,3,28,3,28,9,40,9,40,20,46,20,46,40,49,40,49,56,57,56,57,62,69,62,69,62,79,62,79,57,89,57,89,40,98,40,98,20,98,20,98,0,90,25,-10,42,-24];
+ //Ź:
+ t[377] = [0,0,62,0,62,0,0,98,0,98,62,98,25,-10,42,-24];
+ //Ż:
+ t[379] = [0,0,62,0,62,0,0,98,0,98,62,98,31,-10,31,-15];
+ 
+ //kropka:
+ t[46] = [0,93,0,98];
+ //przecinek:
+ t[44] = [4,93,0,106];
+ //minus:
+ t[45] = [0,62,36,62];
+ //wykrzyknik:
+ t[33] = [0,0,0,71,0,94,0,98];
+ //pytajnik
+ t[63] = [0,18,5,6,5,6,16,0,16,0,26,0,26,0,38,6,38,6,43,15,43,15,43,29,43,29,22,62,22,62,22,71,22,94,22,98];
+ //dwukropek
+ t[58] = [0,58,0,62,0,94,0,98]
+ //średnik
+ t[59] = [2,58,2,62,4,95,0,105];
+ //apostrof
+ t[39] = [4,0,0,17];
+ //cudzysłów
+ t[34] = [4,0,0,17,18,0,13,17];
+ //ampersand
+ t[38] = [74,98,18,31,18,31,13,21,13,21,13,8,13,8,21,0,21,0,42,0,42,0,49,8,49,8,49,18,49,18,42,29,42,29,7,52,7,52,0,65,0,65,0,81,0,81,8,92,8,92,22,98,22,98,40,98,40,98,55,89,55,89,78,57];
+ //plus
+ t[43] = [0,61,50,61,25,36,25,86];
+ //nawias otwierający
+ t[40] = [23,123,12,109,12,109,0,79,0,79,0,34,0,34,9,6,9,6,23,-14];
+ //nawias zamykający
+ t[41] = [0,123,11,109,11,109,23,79,23,79,23,34,23,34,14,6,14,6,0,-14];
+
+function generate()
+{
+ 
+var text = document.getElementById("input_text").value;
+
+var code="";
+
+var z = parseFloat(document.getElementById("distance_z").value);
+var x = parseFloat(document.getElementById("distance_x").value);
+var h = parseFloat(document.getElementById("char_height").value);
+
+var lw = parseFloat(document.getElementById("line_width").value);
+
+var col = document.getElementById("line_color").value.substr(1,6);
+
+var cnt = parseFloat(document.getElementById("line_count").value);
+var stp = parseFloat(document.getElementById("line_step").value);
+
+var twc = parseFloat(document.getElementById("twig_size").value);
+var tws = parseFloat(document.getElementById("twig_space").value);
+
+var textLength = 0;
+
+var textLengthMeters = 0;
+
+var offset = 0;
+
+var tagName = "";
+
+var alignLeft = document.getElementById("align_left").checked;
+var alignCenter = document.getElementById("align_center").checked;
+var alignRight = document.getElementById("align_right").checked;
+
+if(document.getElementById("type_twigs").checked) tagName = "twigs";
+if(document.getElementById("type_spray").checked) tagName = "spray";
+if(document.getElementById("type_line").checked) tagName = "line";
+
+for(var i=0;i<text.length; i++)
+{
+if(i == text.length-1) textLengthMeters += ((width[text.charCodeAt(i)])/98*h);
+else textLengthMeters += ((20+width[text.charCodeAt(i)])/98*h);
+}
+
+if(alignLeft) offset = 0;
+if(alignCenter) offset = -0.5*textLengthMeters;
+if(alignRight) offset = -1*textLengthMeters;
+
+for(var i=0;i<text.length; i++)
+{
+
+code += "<!-- znak: " + text.charAt(i) + " -->\n";
+
+for(var j=0; j<t[text.charCodeAt(i)].length; j+=4)
+{
+
+var x1 = z+offset+(t[text.charCodeAt(i)][j+0]/98*h)+(textLength/98*h);
+var y1 = x+(t[text.charCodeAt(i)][j+1]/98*h);
+var x2 = z+offset+(t[text.charCodeAt(i)][j+2]/98*h)+(textLength/98*h);
+var y2 = x+(t[text.charCodeAt(i)][j+3]/98*h);
+
+if(y1 > y2) //zamienić
+{
+var tmpy = y2;
+var tmpx = x2;
+y2 = y1;
+x2 = x1;
+y1 = tmpy;
+x1 = tmpx;
+}
+
+//grube linie: ostatnia w 2, pierwsza w 4, ostatnia w 5, pierwsza w 7
+
+if(y1 != y2 || x1 == x2)
+{
+//code += "<spray d1=\"" + y1 + "\" d2=\"" + y2 + "\" z1=\"" + x1 + "\" z2=\"" + x2 + "\" c=\"0xff0000\" w=\"0.25\"/>\n";
+//code += "<twigs d1=\"" + y1 + "\" d2=\"" + y2 + "\" z1=\"" + x1 + "\" z2=\"" + x2 + "\" c=\"0xff0000\" w=\"0.25\" step=\"0.05\" count=\"3\"/>\n";
+if(tagName == "line")
+{
+code += "<" + tagName + " d1=\"" + y1.toFixed(4) + "\" d2=\"" + y2.toFixed(4) + "\" z1=\"" + x1.toFixed(4) + "\" z2=\"" + x2.toFixed(4) + "\" c=\"0x" + col + "\" w=\"" + lw + "\" step=\"" + stp + "\" count=\"" + cnt + "\"/>\n";
+}
+else if(tagName == "spray")
+{
+code += "<" + tagName + " d1=\"" + y1.toFixed(4) + "\" d2=\"" + y2.toFixed(4) + "\" z1=\"" + x1.toFixed(4) + "\" z2=\"" + x2.toFixed(4) + "\" c=\"0x" + col + "\" fade1=\"0\" fade2=\"0\" w=\"" + lw + "\" step=\"" + stp + "\" count=\"" + cnt + "\"/>\n";
+}
+else
+{
+code += "<" + tagName + " d1=\"" + y1.toFixed(4) + "\" d2=\"" + y2.toFixed(4) + "\" z1=\"" + x1.toFixed(4) + "\" z2=\"" + x2.toFixed(4) + "\" size=\"" + twc + "\" space=\"" + tws + "\" step=\"" + stp + "\" count=\"" + cnt + "\"/>\n";
+}
+}
+
+else
+{
+//code += "<spray d=\"" + y1 + "\" z1=\"" + x1 + "\" z2=\"" + x2 + "\" c=\"0xff0000\" w=\"0.06\"/>\n";
+//code += "<twigs d=\"" + y1 + "\" z1=\"" + x1 + "\" z2=\"" + x2 + "\" c=\"0xff0000\" w=\"0.06\" step=\"0.05\" count=\"3\"/>\n";
+if(tagName == "line")
+{
+code += "<" + tagName + "  d=\"" + y1.toFixed(4) + "\" z1=\"" + x1.toFixed(4) + "\" z2=\"" + x2.toFixed(4) + "\" c=\"0x" + col + "\" w=\"" + (lw/4) + "\" step=\"" + stp + "\" count=\"" + cnt + "\"/>\n";
+}
+else if(tagName == "spray")
+{
+code += "<" + tagName + "  d=\"" + y1.toFixed(4) + "\" z1=\"" + x1.toFixed(4) + "\" z2=\"" + x2.toFixed(4) + "\" c=\"0x" + col + "\" fade1=\"0\" fade2=\"0\" w=\"" + (lw/4) + "\" step=\"" + stp + "\" count=\"" + cnt + "\"/>\n";
+}
+else
+{
+code += "<" + tagName + "  d=\"" + y1.toFixed(4) + "\" z1=\"" + x1.toFixed(4) + "\" z2=\"" + x2.toFixed(4) + "\" size=\"" + twc + "\" space=\"" + tws + "\" step=\"" + stp + "\" count=\"" + cnt + "\"/>\n";
+}
+
+}
+
+}
+
+textLength += (20+width[text.charCodeAt(i)]);
+
+}
+
+document.getElementById("output_xml").value = code;
+
+}
+
+
+
+
+</script>
+
+</body>
+</html>
