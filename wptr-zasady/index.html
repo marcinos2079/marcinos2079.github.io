@@ -1,0 +1,159 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>Kreator pól do zasad na WPTR</title>
+<style>
+body {background-color:#dddddd;font-family:Tahoma;font-size:11pt}
+div#container {max-width:1024px;margin:0 auto;background-color:#ffffff;padding:0.1% 2%}
+div#zestaw_pol {border:1px solid #1166ff;padding:5px 0px}
+div.pole {margin-top:2px;margin-bottom:2px}
+span.lp {display:inline-block; width:30px;color:#888888;text-align:right}
+h1 {font-size:14pt;margin-bottom:4px}
+input[type=text] {width:25%}
+input.nr_rej[type=text] {width:10%}
+input.link_fot[type=text] {width:15%}
+button {background-color:#1166ff;color:white;margin:8px 4px;padding:5px 10px;border:0}
+button:hover {cursor:pointer;background-color:#4499ff}
+hr {border:1px solid #1166ff}
+</style>
+</head>
+<body>
+<div id="container">
+<p>
+<h1>Dodatkowe pola:</h1>
+<div id="zestaw_pol">
+<div class="pole">
+<span class="lp">1.</span> Podpis:
+<input type="text" name="pod_tab" onchange="zapisz_do_tekstu()">
+Typ tablicy:
+<select name="typ_tab" onchange="zapisz_do_tekstu()">
+<option value="1">Zwykła</option>
+<option value="2">Zwykła zmniejszona</option>
+<option value="3">Zielona</option>
+<option value="4">Zielona zmniejszona</option>
+<option value="5">Zabytkowa</option>
+<option value="6">Zabytkowa zmniejszona</option>
+<option value="7">Tymczasowa</option>
+<option value="8">Tymczasowa zmniejszona</option>
+<option value="9">Profesjonalna</option>
+</select>
+Numer:
+<input type="text" class="nr_rej" name="num_tab" onchange="zapisz_do_tekstu()">
+Zdjęcie:
+<input type="text" class="link_fot" name="lnk_tab" onchange="zapisz_do_tekstu()">
+</div>
+</div>
+<button onclick="dodaj_pole()">Dodaj pole</button><button onclick="usun_pole()">Usuń ostatnie pole</button>
+</p>
+<p>
+<hr>
+<h1>Forma tekstowa:</h1>
+<textarea id="pole_tekstu" rows="8" cols="120"></textarea><br>
+<button onclick="wczytaj_z_tekstu()">Załaduj tekst do pól</button>
+<button onclick="konwertuj_na_zasady()">Konwertuj na HTML do wklejenia do zasad</button>
+</p>
+<p>
+<hr>
+<h1>Kod HTML do wklejenia do zasad:</h1>
+<textarea id="zasady_html" rows="8" cols="120"></textarea><br>
+</p>
+</div>
+<script>
+var liczba_pol = 0;
+function dodaj_pole()
+{ 
+var zestaw_pol = document.getElementById("zestaw_pol");
+liczba_pol = zestaw_pol.childElementCount;
+zestaw_pol.insertAdjacentHTML("beforeend", ("<div class=\"pole\"><span class=\"lp\">" + (liczba_pol+1) + ".</span> Podpis: <input type=\"text\" name=\"pod_tab\" onchange=\"zapisz_do_tekstu()\"> Typ tablicy: <select name=\"typ_tab\" onchange=\"zapisz_do_tekstu()\"><option value=\"1\">Zwykła</option><option value=\"2\">Zwykła zmniejszona</option><option value=\"3\">Zielona</option><option value=\"4\">Zielona zmniejszona</option><option value=\"5\">Zabytkowa</option><option value=\"6\">Zabytkowa zmniejszona</option><option value=\"7\">Tymczasowa</option><option value=\"8\">Tymczasowa zmniejszona</option><option value=\"9\">Profesjonalna</option></select> Numer: <input name=\"num_tab\" type=\"text\" onchange=\"zapisz_do_tekstu()\" class=\"nr_rej\"> Zdjęcie: <input name=\"lnk_tab\" type=\"text\" onchange=\"zapisz_do_tekstu()\" class=\"link_fot\"></div>"));
+}
+function usun_pole()
+{
+var zestaw_pol = document.getElementById("zestaw_pol");
+zestaw_pol.removeChild(zestaw_pol.lastChild);
+liczba_pol--;
+}
+function wczytaj_z_tekstu()
+{
+var tekst = document.getElementById("pole_tekstu").value;
+var linie = tekst.split("\n");
+console.log(linie);
+document.getElementById("zestaw_pol").innerHTML = "";
+for(var i=0; i<linie.length; i++)
+{
+dodaj_pole();
+}
+for(var i=0; i<linie.length; i++)
+{
+var linia = linie[i].split("|");
+document.getElementsByName("pod_tab")[i].value = linia[0];
+document.getElementsByName("typ_tab")[i].value = linia[1];
+document.getElementsByName("num_tab")[i].value = linia[2];
+document.getElementsByName("lnk_tab")[i].value = linia[3];
+}
+}
+function zapisz_do_tekstu()
+{
+var zestaw_pol = document.getElementById("zestaw_pol");
+var tab_pod = document.getElementsByName("pod_tab");
+var tab_typ = document.getElementsByName("typ_tab");
+var tab_num = document.getElementsByName("num_tab");
+var tab_lnk = document.getElementsByName("lnk_tab");
+var pole_tekstowe = document.getElementById("pole_tekstu");
+var tekst = "";
+for(var i=0; i<tab_pod.length;i++)
+{
+tekst += document.getElementsByName("pod_tab")[i].value + "|" + document.getElementsByName("typ_tab")[i].value + "|" + document.getElementsByName("num_tab")[i].value + "|" + document.getElementsByName("lnk_tab")[i].value;
+if(i < tab_pod.length-1) tekst+= String.fromCharCode(13, 10);
+}
+pole_tekstowe.value = tekst;
+}
+function konwertuj_na_zasady()
+{
+var zasady = "<span style=\"display:block;margin-left:5px;margin: 5px; border-bottom: solid gray 2px\"><span style=\"display:block;float: right; text-align: right\"></span><span style=\"float: left;display:block\">";
+var tekst_zasad = document.getElementById("zasady_html");
+var tekst = document.getElementById("pole_tekstu").value;
+var linie = tekst.split("\n");
+for(var i=0; i<linie.length; i++)
+{
+var linia = linie[i].split("|");
+
+if(parseInt(linia[1]) == 1)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 2)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;width:75px\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;width:63px\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 3)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;background-color:#C4FFC4\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 4)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;background-color:#C4FFC4;width:75px\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;width:63px\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 5)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;background-color:yellow\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block\" class=\"TbP\">" + linia[2] + "<img src=\"https://wptr.pl/katalogi/grafika/drynda.gif\" style=\"margin: 3px 0px 0px 5px\"></span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 6)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;background-color:yellow;width:75px\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;width:63px\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 7)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;border:1px solid red\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;color:red\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 8)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;border:1px solid red;width:75px\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;color:red;width:63px\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 9)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;border:1px solid #008800\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;color:#008800\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(linia[3].length > 1)
+{
+zasady += "<span style=\"display:block; float: left; margin-left: ";
+if(parseInt(linia[1])%2 == 0)
+{
+zasady += "75";
+}
+else
+{
+zasady += "30";
+}
+zasady += "px; padding-top: 5px\"><a href=\"" + linia[3] + "\" target=\"_blank\"><img src=\"https://wptr.pl/katalogi/grafika/przyciski/fotka.gif\" border=\"0\"></a></span>";
+}
+zasady += "<span style=\"display:block\" class=\"Nic\"></span>";
+}
+
+zasady += "<span style=\"display:block\" class=\"Nic\"></span></span><span style=\"display:block\" class=\"Nic\"></span></span>";
+tekst_zasad.value = zasady;
+}
+</script>
+</body>
+</html>
