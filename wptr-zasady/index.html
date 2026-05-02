@@ -36,6 +36,8 @@ Typ tablicy:
 <option value="7">Tymczasowa</option>
 <option value="8">Tymczasowa zmniejszona</option>
 <option value="9">Profesjonalna</option>
+<option value="10">Sportowa</option>
+<option value="11">Sportowa zmniejszona</option>
 </select>
 Numer:
 <input type="text" class="nr_rej" name="num_tab" onchange="zapisz_do_tekstu()">
@@ -64,7 +66,7 @@ function dodaj_pole()
 { 
 var zestaw_pol = document.getElementById("zestaw_pol");
 liczba_pol = zestaw_pol.childElementCount;
-zestaw_pol.insertAdjacentHTML("beforeend", ("<div class=\"pole\"><span class=\"lp\">" + (liczba_pol+1) + ".</span> Podpis: <input type=\"text\" name=\"pod_tab\" onchange=\"zapisz_do_tekstu()\"> Typ tablicy: <select name=\"typ_tab\" onchange=\"zapisz_do_tekstu()\"><option value=\"1\">Zwykła</option><option value=\"2\">Zwykła zmniejszona</option><option value=\"3\">Zielona</option><option value=\"4\">Zielona zmniejszona</option><option value=\"5\">Zabytkowa</option><option value=\"6\">Zabytkowa zmniejszona</option><option value=\"7\">Tymczasowa</option><option value=\"8\">Tymczasowa zmniejszona</option><option value=\"9\">Profesjonalna</option></select> Numer: <input name=\"num_tab\" type=\"text\" onchange=\"zapisz_do_tekstu()\" class=\"nr_rej\"> Zdjęcie: <input name=\"lnk_tab\" type=\"text\" onchange=\"zapisz_do_tekstu()\" class=\"link_fot\"></div>"));
+zestaw_pol.insertAdjacentHTML("beforeend", ("<div class=\"pole\"><span class=\"lp\">" + (liczba_pol+1) + ".</span> Podpis: <input type=\"text\" name=\"pod_tab\" onchange=\"zapisz_do_tekstu()\"> Typ tablicy: <select name=\"typ_tab\" onchange=\"zapisz_do_tekstu()\"><option value=\"1\">Zwykła</option><option value=\"2\">Zwykła zmniejszona</option><option value=\"3\">Zielona</option><option value=\"4\">Zielona zmniejszona</option><option value=\"5\">Zabytkowa</option><option value=\"6\">Zabytkowa zmniejszona</option><option value=\"7\">Tymczasowa</option><option value=\"8\">Tymczasowa zmniejszona</option><option value=\"9\">Profesjonalna</option><option value=\"10\">Sportowa</option><option value=\"11\">Sportowa zmniejszona</option></select> Numer: <input name=\"num_tab\" type=\"text\" onchange=\"zapisz_do_tekstu()\" class=\"nr_rej\"> Zdjęcie: <input name=\"lnk_tab\" type=\"text\" onchange=\"zapisz_do_tekstu()\" class=\"link_fot\"></div>"));
 }
 function usun_pole()
 {
@@ -135,6 +137,10 @@ if(parseInt(linia[1]) == 8)
 zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;border:1px solid red;width:75px\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;color:red;width:63px\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
 if(parseInt(linia[1]) == 9)
 zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;border:1px solid #008800\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;color:#008800\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 10)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;background-color:yellow;border:1px solid red\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;color:red\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
+if(parseInt(linia[1]) == 11)
+zasady += "<span style=\"display:block;float: left; width: 360px; text-align:right; padding-top: 3px\">" + linia[0] + " -</span><span style=\"display:block;float: left; padding-left: 5px; margin-bottom: 5px\"><span class=\"Tb\" style=\"display:block;margin: 0px 4px;background-color:yellow;border:1px solid red;width:75px\"><span style=\"display:block\" class=\"TbL\">&nbsp;</span><span style=\"display:block;color:red;width:63px\" class=\"TbP\">" + linia[2] + "</span><span style=\"display:block\" class=\"Nic\">&nbsp;</span></span></span>";
 if(linia[3].length > 1)
 {
 zasady += "<span style=\"display:block; float: left; margin-left: ";
